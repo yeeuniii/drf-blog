@@ -6,7 +6,25 @@ from posts import models
 from posts.models import Posting
 
 
-class PostingSerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Comment
+        fields = ['content', 'nickname', 'date']
+
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Like
+        fields = ['nickname']
+
+
+class PostingSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Posting
+        exclude = ['content']
+
+
+class PostingCreateSerializer(serializers.ModelSerializer):
     date = serializers.DateTimeField(default=datetime.now)
     like_count = serializers.IntegerField(default=0)
 
@@ -19,18 +37,3 @@ class PostingSerializer(serializers.ModelSerializer):
         validated_data['like_count'] = self.fields['like_count'].get_default()
         return Posting.objects.create(**validated_data)
 
-
-class CommentSerializer(serializers.ModelSerializer):
-    posting = PostingSerializer()
-
-    class Meta:
-        model = models.Comment
-        fields = ['posting_id', 'content', 'nickname', 'date']
-
-
-class LikeSerializer(serializers.ModelSerializer):
-    posting = PostingSerializer()
-
-    class Meta:
-        model = models.Like
-        fields = ['posting_id', 'nickname']
