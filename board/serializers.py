@@ -32,7 +32,8 @@ class PostCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Post
-        fields = ['id', 'title', 'content', 'nickname', 'password', 'date', 'like_count', 'comments']
+        fields = ['id', 'title', 'content', 'nickname', 'password', 'date', 'like_count']
+
 
     def create(self, validated_data):
         validated_data['date'] = self.fields['date'].get_default()
@@ -43,3 +44,14 @@ class PostCreateSerializer(serializers.ModelSerializer):
         if not value.isdigit() or len(value) != 4:
             raise serializers.ValidationError()
         return value
+
+
+class PostDetailSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True, read_only=True)
+    likes = LikeSerializer(many=True, read_only=True)
+    date = serializers.DateTimeField(required=False)
+    like_count = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = models.Post
+        fields = ['id', 'title', 'content', 'nickname', 'date', 'like_count', 'comments', 'likes']
