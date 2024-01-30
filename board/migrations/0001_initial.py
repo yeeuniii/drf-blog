@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('nickname', models.CharField(max_length=50)),
-                ('posting_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='posts.posting')),
+                ('posting_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='board.posting')),
             ],
         ),
         migrations.CreateModel(
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('content', models.TextField()),
                 ('nickname', models.CharField(max_length=50)),
                 ('date', models.DateTimeField()),
-                ('posting_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='posts.posting')),
+                ('posting_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='board.posting')),
             ],
         ),
     ]

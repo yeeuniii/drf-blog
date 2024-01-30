@@ -1,11 +1,11 @@
 from django.urls import path
 
-from posts import views
+from board import views
 
-app_name = 'posts'
+app_name = 'board'
 urlpatterns = [
-    path('', views.PostingsView.as_view(), name='postings'),
-    # path('<int:pk>/', views.PostingView.as_view(), name='posting'),
+    path('', views.PostsView.as_view(), name='posts'),
+    # path('<int:pk>/', views.PostView.as_view(), name='post'),
     # path('<int:pk>/comment', views.CommentView.as_view(), name='comment'),
     # path('<int:pk>/like', views.LikeView.as_view(), name='like'),
 ]
