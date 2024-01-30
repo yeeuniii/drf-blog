@@ -54,4 +54,18 @@ class PostDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Post
-        fields = ['id', 'title', 'content', 'nickname', 'date', 'like_count', 'comments', 'likes']
+        fields = ['id', 'title', 'content', 'nickname', 'password', 'date', 'like_count', 'comments', 'likes']
+
+
+class PostPasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = models.Post
+        fields = ['password']
+
+    def validate_password(self, value):
+        instance = self.instance
+        if instance and value != instance.password:
+            raise serializers.ValidationError("비밀번호 불일치")
+        return value
