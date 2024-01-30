@@ -7,6 +7,7 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
     nickname = models.CharField(max_length=50)
+    password = models.CharField(max_length=4)
     date = models.DateTimeField()
     like_count = models.IntegerField()
 
@@ -15,12 +16,12 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    posting_id = models.ForeignKey('Post', on_delete=models.CASCADE)
+    posting_id = models.ForeignKey('Post', on_delete=models.CASCADE, related_name="comments")
     content = models.TextField()
     nickname = models.CharField(max_length=50)
     date = models.DateTimeField()
 
 
 class Like(models.Model):
-    posting_id = models.ForeignKey('Post', on_delete=models.CASCADE)
+    posting_id = models.ForeignKey('Post', on_delete=models.CASCADE, related_name="likes")
     nickname = models.CharField(max_length=50)

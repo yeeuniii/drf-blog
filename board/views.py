@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from board.models import Post
-from board.serializers import PostCreateSerializer, PostSimpleSerializer, PostDetailSerializer
+from board.serializers import PostCreateSerializer, PostSimpleSerializer
 
 
 # Create your views here.
