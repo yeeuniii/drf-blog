@@ -6,7 +6,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from board.models import Post, Comment
-from board.serializers import PostSimpleSerializer, PostCreateSerializer, PostDetailSerializer, CommentSerializer
+from board.serializers import PostSimpleSerializer, \
+    PostCreateSerializer, PostDetailSerializer, \
+    CommentSerializer
 
 
 # Create your views here.
@@ -28,18 +30,21 @@ class PostsView(APIView):
 
 
 class PostView(APIView):
-    def check_password(self, posting, data):
-        return 'password' in data and posting.password == data.get('password')
+    def check_password(self, posting, input_password):
+        return posting.password == input_password
 
     def update_post(self, request, post_id, allow_partial=False):
         posting = get_object_or_404(Post, id=post_id)
         serializer_class = PostDetailSerializer(posting, data=request.data, partial=allow_partial)
         if not serializer_class.is_valid():
             return Response(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
-        if self.check_password(posting, serializer_class.validated_data):
-            serializer_class.save()
-            return Response(serializer_class.data, status=status.HTTP_200_OK)
-        return Response("비밀번호 불일치", status=status.HTTP_403_FORBIDDEN)
+        password = serializer_class.validated_data['password']
+        if not password:
+            return Response("비밀번호 미입력", status=status.HTTP_400_BAD_REQUEST)
+        if not self.check_password(posting, input_password=password):
+            return Response("비밀번호 불일치", status=status.HTTP_403_FORBIDDEN)
+        serializer_class.save()
+        return Response(serializer_class.data, status=status.HTTP_200_OK)
 
     def get(self, request, post_id):
         posting = get_object_or_404(Post, id=post_id)
@@ -54,10 +59,13 @@ class PostView(APIView):
 
     def delete(self, request, post_id):
         posting = get_object_or_404(Post, id=post_id)
-        if self.check_password(posting, request.GET):
-            posting.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response("비밀번호 불일치", status=status.HTTP_403_FORBIDDEN)
+        password = request.GET.get('password')
+        if not password:
+            return Response("비밀번호 미입력", status=status.HTTP_400_BAD_REQUEST)
+        if not self.check_password(posting, input_password=password):
+            return Response("비밀번호 불일치", status=status.HTTP_403_FORBIDDEN)
+        posting.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CommentView(APIView):
