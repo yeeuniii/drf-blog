@@ -16,12 +16,12 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    posting_id = models.ForeignKey('Post', on_delete=models.CASCADE, related_name="comments")
+    post_id = models.ForeignKey('Post', on_delete=models.CASCADE, related_name="comments")
     content = models.TextField()
     nickname = models.CharField(max_length=50)
     date = models.DateTimeField(auto_now_add=True)
 
 
 class Like(models.Model):
-    posting_id = models.ForeignKey('Post', on_delete=models.CASCADE, related_name="likes")
+    post_id = models.ForeignKey('Post', on_delete=models.CASCADE, related_name="likes")
     nickname = models.CharField(max_length=50)

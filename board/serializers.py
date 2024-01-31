@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from rest_framework import serializers
 
 from board import models
@@ -9,7 +7,8 @@ from board.models import Post
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
-        fields = ['id', 'content', 'nickname', 'date']
+        fields = ['id', 'post_id', 'content', 'nickname', 'date']
+        read_only_fields = ['post_id']
 
 
 class LikeSerializer(serializers.ModelSerializer):
