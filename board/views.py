@@ -29,8 +29,8 @@ class PostView(APIView):
     def check_password(self, posting, data):
         return 'password' in data and posting.password == data.get('password')
 
-    def update_post(self, request, pk, allow_partial=False):
-        posting = get_object_or_404(Post, pk=pk)
+    def update_post(self, request, post_id, allow_partial=False):
+        posting = get_object_or_404(Post, id=post_id)
         serializer_class = PostDetailSerializer(posting, data=request.data, partial=allow_partial)
         if not serializer_class.is_valid():
             return Response(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -39,19 +39,19 @@ class PostView(APIView):
             return Response(serializer_class.data, status=status.HTTP_200_OK)
         return Response("비밀번호 불일치", status=status.HTTP_403_FORBIDDEN)
 
-    def get(self, request, pk):
-        posting = get_object_or_404(Post, pk=pk)
+    def get(self, request, post_id):
+        posting = get_object_or_404(Post, id=post_id)
         serializer_class = PostDetailSerializer(posting)
         return Response(serializer_class.data)
 
-    def put(self, request, pk):
-        return self.update_post(request, pk)
+    def put(self, request, post_id):
+        return self.update_post(request, post_id)
 
-    def patch(self, request, pk):
-        return self.update_post(request, pk, allow_partial=True)
+    def patch(self, request, post_id):
+        return self.update_post(request, post_id, allow_partial=True)
 
-    def delete(self, request, pk):
-        posting = get_object_or_404(Post, pk=pk)
+    def delete(self, request, post_id):
+        posting = get_object_or_404(Post, id=post_id)
         if self.check_password(posting, request.GET):
             posting.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
