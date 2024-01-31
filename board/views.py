@@ -5,10 +5,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from board.models import Post, Comment
+from board.models import Post, Comment, Like
 from board.serializers import PostSimpleSerializer, \
     PostCreateSerializer, PostDetailSerializer, \
-    CommentSerializer
+    CommentSerializer, LikeSerializer
 
 
 # Create your views here.
@@ -84,3 +84,27 @@ class CommentView(APIView):
             comment_serializer.save(post_id=post)
             return HttpResponseRedirect(reverse('board:post', kwargs={'post_id': post_id}))
         return Response(comment_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LikeView(APIView):
+    def get(self, request, post_id):
+        likes = get_list_or_404(Like, post_id=post_id)
+        like_serializer = LikeSerializer(data=likes, many=True)
+        like_serializer.is_valid()
+        return Response(like_serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+
+        like_serializer = LikeSerializer(data=request.data, context={'post_id': post_id})
+        if not like_serializer.is_valid():
+            return Response(like_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        password = like_serializer.validated_data['nickname']
+        like = Like.objects.filter(post_id=post_id).filter(nickname=password)
+        if like:
+            return Response("이미 좋아요 누름", status=status.HTTP_403_FORBIDDEN)
+        post.like_count += 1
+        post.save()
+        like_serializer.save(post_id=post)
+        return HttpResponseRedirect(reverse('board:post', kwargs={'post_id': post_id}))
+
