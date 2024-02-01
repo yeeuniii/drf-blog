@@ -5,7 +5,7 @@ from django.db import models
 
 class Post(models.Model):
     title = models.CharField(max_length=100)
-    content = models.TextField(blank=True)
+    content = models.TextField()
     nickname = models.CharField(max_length=50)
     password = models.CharField(max_length=4)
     date = models.DateTimeField(auto_now_add=True)

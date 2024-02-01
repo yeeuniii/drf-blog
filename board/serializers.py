@@ -8,7 +8,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
         fields = ['id', 'post_id', 'content', 'nickname', 'date']
-        read_only_fields = ['post_id']
+        read_only_fields = ['post_id', 'date']
 
 
 class LikeSerializer(serializers.ModelSerializer):
@@ -16,7 +16,6 @@ class LikeSerializer(serializers.ModelSerializer):
         model = models.Like
         fields = ['nickname']
         read_only_fields = ['post_id']
-
 
 
 class PostSimpleSerializer(serializers.ModelSerializer):
@@ -27,15 +26,10 @@ class PostSimpleSerializer(serializers.ModelSerializer):
 
 class PostCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-    like_count = serializers.IntegerField(default=0)
 
     class Meta:
         model = models.Post
-        fields = ['id', 'title', 'content', 'nickname', 'password', 'date', 'like_count']
-
-    def create(self, validated_data):
-        validated_data['like_count'] = self.fields['like_count'].get_default()
-        return Post.objects.create(**validated_data)
+        fields = ['id', 'title', 'content', 'nickname', 'password']
 
     def validate_password(self, value):
         if not value.isdigit() or len(value) != 4:
@@ -50,4 +44,4 @@ class PostDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Post
         fields = ['id', 'title', 'content', 'nickname', 'password', 'date', 'like_count', 'likes']
-        read_only_fields = ('date', 'like_count')
+        read_only_fields = ('nickname', 'date', 'like_count')
