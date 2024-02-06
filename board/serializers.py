@@ -21,7 +21,7 @@ class LikeSerializer(serializers.ModelSerializer):
 class PostSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Post
-        exclude = ['content', 'password']
+        exclude = ['password']
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
